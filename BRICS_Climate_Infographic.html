@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRICS Climate Agenda Infographic</title>
+<style>
+  :root {
+    --navy: #1B3A5C;
+    --slate: #475569;
+    --light: #F8FAFB;
+    --border: #E2E8F0;
+    --muted: #94A3B8;
+    --russia: #C94B4B;
+    --brazil: #2E8B57;
+    --china: #D4A017;
+    --india: #E87D2F;
+    --sa: #3A7BD5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--light); padding: 28px 24px; color: var(--slate); }
+
+  .lang-toggle { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 12px; }
+  .lang-btn { padding: 5px 14px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+  .lang-btn.active { background: var(--navy); color: #fff; border: 2px solid var(--navy); }
+  .lang-btn:not(.active) { background: #fff; color: var(--navy); border: 1px solid var(--border); }
+
+  .header { text-align: center; margin-bottom: 28px; }
+  .header h1 { font-size: 24px; color: var(--navy); font-weight: 700; line-height: 1.3; }
+  .header .sub { font-size: 13px; color: #64748B; font-style: italic; margin-top: 6px; }
+  .header .author { font-size: 10px; color: var(--muted); margin-top: 3px; }
+
+  .stats { display: flex; justify-content: center; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
+  .stat-card { background: #fff; border-radius: 10px; padding: 12px 18px; min-width: 130px; text-align: center; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .stat-card .val { font-size: 26px; font-weight: 800; color: var(--navy); }
+  .stat-card .val.red { color: #D94F4F; }
+  .stat-card .lbl { font-size: 10px; color: #64748B; margin-top: 3px; line-height: 1.3; }
+
+  .card { background: #fff; border-radius: 12px; padding: 18px 14px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow-x: auto; }
+  .card h2 { font-size: 15px; color: var(--navy); font-weight: 700; margin-bottom: 14px; }
+
+  /* Heatmap */
+  .heatmap { display: grid; gap: 2px; min-width: 660px; }
+  .hm-label { font-size: 10px; color: #334155; padding: 3px 6px 3px 0; display: flex; align-items: center; gap: 5px; }
+  .hm-label .dot { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+  .hm-year { font-size: 9px; font-weight: 700; text-align: center; color: var(--navy); padding: 3px 0; }
+  .hm-year .host-dot { width: 7px; height: 7px; border-radius: 50%; margin: 2px auto 0; }
+  .hm-cell { border-radius: 3px; min-height: 20px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #fff; }
+  .hm-cell.present { opacity: 0.85; }
+  .hm-cell.absent { background: #F1F5F9; opacity: 0.4; }
+
+  .legend { display: flex; gap: 14px; margin-top: 10px; font-size: 9px; color: #64748B; align-items: center; flex-wrap: wrap; }
+  .legend .host-item { display: flex; align-items: center; gap: 3px; }
+  .legend .host-item .circ { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+
+  /* Bar chart */
+  .bars { display: flex; align-items: flex-end; gap: 5px; height: 150px; padding: 0 6px; min-width: 560px; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .bar-val { font-size: 9px; font-weight: 700; margin-bottom: 2px; }
+  .bar-val.hi { color: var(--navy); }
+  .bar-val.lo { color: var(--muted); }
+  .bar-rect { width: 100%; max-width: 32px; border-radius: 3px 3px 0 0; transition: height 0.3s; }
+  .bar-rect.hi { background: linear-gradient(180deg, #1B3A5C, #2D5F8A); }
+  .bar-rect.lo { background: linear-gradient(180deg, #94A3B8, #CBD5E1); }
+  .bar-yr { font-size: 8px; color: #64748B; margin-top: 3px; font-weight: 600; }
+  .bar-host { width: 5px; height: 5px; border-radius: 50%; margin-top: 2px; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 22px; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .tl-item { display: flex; gap: 10px; margin-bottom: 12px; position: relative; }
+  .tl-dot { position: absolute; left: -19px; top: 2px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #fff; }
+  .tl-dot.highlight { background: var(--navy); box-shadow: 0 0 0 2px var(--navy); }
+  .tl-dot.normal { background: var(--muted); box-shadow: 0 0 0 2px var(--border); }
+  .tl-year { font-size: 11px; font-weight: 800; }
+  .tl-year.highlight { color: var(--navy); }
+  .tl-year.normal { color: var(--slate); }
+  .tl-text { font-size: 11px; color: var(--slate); margin-left: 6px; }
+
+  .footer { text-align: center; margin-top: 20px; font-size: 9px; color: var(--muted); }
+
+  @media print { body { padding: 12px; } .lang-toggle { display: none; } }
+</style>
+</head>
+<body>
+
+<div class="lang-toggle">
+  <button class="lang-btn active" id="btn-en" onclick="setLang('en')">English</button>
+  <button class="lang-btn" id="btn-pt" onclick="setLang('pt')">Português</button>
+</div>
+
+<div class="header">
+  <h1 id="title">The Climate Agenda in BRICS Declarations (2009–2024)</h1>
+  <div class="sub" id="subtitle">Tracking climate-related themes across sixteen summit communiqués</div>
+  <div class="author">Paulo Esteves | BRICS Policy Center / Think Equal</div>
+</div>
+
+<div class="stats" id="stats"></div>
+
+<div class="card">
+  <h2 id="heatTitle">Thematic Presence by Year</h2>
+  <div class="heatmap" id="heatmap"></div>
+  <div class="legend" id="legend"></div>
+</div>
+
+<div class="card">
+  <h2 id="barTitle">Climate Paragraphs per Declaration</h2>
+  <div class="bars" id="bars"></div>
+</div>
+
+<div class="card">
+  <h2 id="tlTitle">Key Milestones</h2>
+  <div class="timeline" id="timeline"></div>
+</div>
+
+<div class="footer" id="footer"></div>
+
+<script>
+const data = [
+  {y:2009,h:"Russia",cc:1,cbdr:1,en:1,food:0,tech:0,fin:0,trade:0,paris:0,just:0,p:1},
+  {y:2010,h:"Brazil",cc:1,cbdr:0,en:1,food:0,tech:0,fin:0,trade:0,paris:0,just:0,p:1},
+  {y:2011,h:"China",cc:1,cbdr:1,en:1,food:1,tech:0,fin:0,trade:0,paris:0,just:0,p:2},
+  {y:2012,h:"India",cc:1,cbdr:1,en:1,food:1,tech:0,fin:0,trade:0,paris:0,just:0,p:3},
+  {y:2013,h:"South Africa",cc:1,cbdr:1,en:1,food:1,tech:0,fin:0,trade:0,paris:0,just:0,p:3},
+  {y:2014,h:"Brazil",cc:1,cbdr:1,en:1,food:1,tech:1,fin:0,trade:0,paris:0,just:0,p:4},
+  {y:2015,h:"Russia",cc:1,cbdr:1,en:1,food:1,tech:1,fin:0,trade:0,paris:0,just:0,p:3},
+  {y:2016,h:"India",cc:1,cbdr:1,en:1,food:1,tech:1,fin:0,trade:0,paris:1,just:0,p:4},
+  {y:2017,h:"China",cc:1,cbdr:1,en:1,food:1,tech:1,fin:0,trade:0,paris:1,just:0,p:4},
+  {y:2018,h:"South Africa",cc:1,cbdr:1,en:1,food:1,tech:1,fin:1,trade:0,paris:1,just:1,p:8},
+  {y:2019,h:"Brazil",cc:1,cbdr:1,en:1,food:1,tech:1,fin:1,trade:0,paris:1,just:0,p:5},
+  {y:2020,h:"Russia",cc:1,cbdr:1,en:1,food:1,tech:1,fin:0,trade:0,paris:1,just:0,p:4},
+  {y:2021,h:"India",cc:1,cbdr:1,en:1,food:1,tech:1,fin:0,trade:0,paris:1,just:1,p:5},
+  {y:2022,h:"China",cc:1,cbdr:1,en:1,food:1,tech:1,fin:1,trade:0,paris:1,just:1,p:6},
+  {y:2023,h:"South Africa",cc:1,cbdr:1,en:1,food:1,tech:1,fin:1,trade:1,paris:1,just:1,p:8},
+  {y:2024,h:"Russia",cc:1,cbdr:1,en:1,food:1,tech:1,fin:1,trade:1,paris:1,just:1,p:7},
+];
+
+const themes = [
+  {k:"cc",en:"Climate Change",pt:"Mudança Climática",c:"#1B6B3A"},
+  {k:"cbdr",en:"CBDR-RC",pt:"RCPD-RC",c:"#2D8B57"},
+  {k:"en",en:"Energy / Renewables",pt:"Energia / Renováveis",c:"#48A06E"},
+  {k:"food",en:"Food Security / Agriculture",pt:"Segurança Alimentar / Agricultura",c:"#F2A922"},
+  {k:"tech",en:"Technology Transfer",pt:"Transferência de Tecnologia",c:"#E87D2F"},
+  {k:"fin",en:"Climate Finance / GCF",pt:"Financiamento Climático / GCF",c:"#D94F4F"},
+  {k:"paris",en:"Paris Agreement",pt:"Acordo de Paris",c:"#3A7BD5"},
+  {k:"trade",en:"Trade Barriers (CBAM)",pt:"Barreiras Comerciais (CBAM)",c:"#8B5CF6"},
+  {k:"just",en:"Just Transition",pt:"Transição Justa",c:"#0EA5E9"},
+];
+
+const hc = {Russia:"#C94B4B",Brazil:"#2E8B57",China:"#D4A017",India:"#E87D2F","South Africa":"#3A7BD5"};
+
+const i18n = {
+  en:{
+    title:"The Climate Agenda in BRICS Declarations (2009\u20132024)",
+    sub:"Tracking climate-related themes across sixteen summit communiqués",
+    heat:"Thematic Presence by Year",bar:"Climate Paragraphs per Declaration",
+    tl:"Key Milestones",pres:"Presidency",present:"Present",absent:"Absent",
+    stats:[{v:"15/16",l:"declarations mention climate change"},
+      {v:"13/16",l:"invoke CBDR-RC"},{v:"7/16",l:"address climate finance"},
+      {v:"0",l:"collective emission targets set"}],
+    miles:[
+      {y:2009,t:"First CBDR-RC reference in BRIC statement"},
+      {y:2014,t:'Climate called "one of the greatest challenges facing humankind"'},
+      {y:2016,t:"Paris Agreement first referenced"},
+      {y:2018,t:"Energy transition language introduced; peak in climate paragraphs"},
+      {y:2019,t:"First mention of the Green Climate Fund (GCF)"},
+      {y:2023,t:'"Just transition" and opposition to CBAM codified'},
+      {y:2024,t:"Expansion adds major fossil fuel producers; Contact Group created"},
+      {y:2025,t:"Rio Summit: Leaders\u2019 Framework Declaration on Climate Finance adopted"},
+    ],
+    footer:"Source: Systematic analysis of all BRICS summit declarations (2009\u20132024) and the Rio de Janeiro Declaration (2025)."
+  },
+  pt:{
+    title:"A Agenda de Clima nas Declarações do BRICS (2009\u20132024)",
+    sub:"Rastreando temas climáticos em dezesseis comunicados de cúpula",
+    heat:"Presença Temática por Ano",bar:"Parágrafos sobre Clima por Declaração",
+    tl:"Marcos-Chave",pres:"Presidência",present:"Presente",absent:"Ausente",
+    stats:[{v:"15/16",l:"declarações mencionam mudança climática"},
+      {v:"13/16",l:"invocam RCPD-RC"},{v:"7/16",l:"abordam financiamento climático"},
+      {v:"0",l:"metas coletivas de emissão definidas"}],
+    miles:[
+      {y:2009,t:"Primeira referência ao RCPD-RC em declaração do BRIC"},
+      {y:2014,t:'Clima chamado de "um dos maiores desafios que a humanidade enfrenta"'},
+      {y:2016,t:"Primeira referência ao Acordo de Paris"},
+      {y:2018,t:"Linguagem de transição energética introduzida; pico de parágrafos sobre clima"},
+      {y:2019,t:"Primeira menção ao Fundo Verde para o Clima (GCF)"},
+      {y:2023,t:'"Transição justa" e oposição ao CBAM codificadas'},
+      {y:2024,t:"Expansão adiciona grandes produtores de combustíveis fósseis; Grupo de Contato criado"},
+      {y:2025,t:"Cúpula do Rio: Declaração-Quadro dos Líderes sobre Financiamento Climático adotada"},
+    ],
+    footer:"Fonte: Análise sistemática de todas as declarações de cúpula do BRICS (2009\u20132024) e a Declaração do Rio de Janeiro (2025)."
+  }
+};
+
+let lang = "en";
+
+function setLang(l) {
+  lang = l;
+  document.getElementById("btn-en").className = "lang-btn" + (l==="en"?" active":"");
+  document.getElementById("btn-pt").className = "lang-btn" + (l==="pt"?" active":"");
+  render();
+}
+
+function render() {
+  const t = i18n[lang];
+  document.getElementById("title").textContent = t.title;
+  document.getElementById("subtitle").textContent = t.sub;
+  document.getElementById("heatTitle").textContent = t.heat;
+  document.getElementById("barTitle").textContent = t.bar;
+  document.getElementById("tlTitle").textContent = t.tl;
+
+  // Stats
+  let sh = "";
+  t.stats.forEach((s,i) => {
+    sh += `<div class="stat-card"><div class="val${i===3?' red':''}">${s.v}</div><div class="lbl">${s.l}</div></div>`;
+  });
+  document.getElementById("stats").innerHTML = sh;
+
+  // Heatmap
+  const cols = data.length;
+  let hh = "";
+  const gridCols = `150px repeat(${cols}, 1fr)`;
+  // Header row
+  hh += `<div style="grid-column:1"></div>`;
+  data.forEach(d => {
+    hh += `<div class="hm-year">${d.y}<div class="host-dot" style="background:${hc[d.h]}" title="${d.h}"></div></div>`;
+  });
+  // Theme rows
+  themes.forEach(th => {
+    hh += `<div class="hm-label"><span class="dot" style="background:${th.c}"></span>${lang==="en"?th.en:th.pt}</div>`;
+    data.forEach(d => {
+      const v = d[th.k];
+      hh += `<div class="hm-cell ${v?'present':'absent'}" style="${v?'background:'+th.c:''}">${v?'✓':''}</div>`;
+    });
+  });
+  const hm = document.getElementById("heatmap");
+  hm.style.gridTemplateColumns = gridCols;
+  hm.innerHTML = hh;
+
+  // Legend
+  let lg = `<span style="font-weight:700">${t.pres}:</span>`;
+  Object.entries(hc).forEach(([n,c]) => {
+    lg += `<span class="host-item"><span class="circ" style="background:${c}"></span>${n}</span>`;
+  });
+  lg += `<span style="margin-left:12px"><span style="display:inline-block;width:10px;height:10px;background:#2E8B57;border-radius:2px;vertical-align:middle;margin-right:2px;opacity:0.85"></span>= ${t.present}</span>`;
+  lg += `<span><span style="display:inline-block;width:10px;height:10px;background:#F1F5F9;border-radius:2px;vertical-align:middle;margin-right:2px;border:1px solid #CBD5E1"></span>= ${t.absent}</span>`;
+  document.getElementById("legend").innerHTML = lg;
+
+  // Bars
+  const maxP = Math.max(...data.map(d=>d.p));
+  let bh = "";
+  data.forEach(d => {
+    const h = (d.p/maxP)*130;
+    const hi = d.p >= 7;
+    bh += `<div class="bar-col">
+      <div class="bar-val ${hi?'hi':'lo'}">${d.p}</div>
+      <div class="bar-rect ${hi?'hi':'lo'}" style="height:${h}px"></div>
+      <div class="bar-yr">'${String(d.y).slice(2)}</div>
+      <div class="bar-host" style="background:${hc[d.h]}"></div>
+    </div>`;
+  });
+  document.getElementById("bars").innerHTML = bh;
+
+  // Timeline
+  let tlh = "";
+  t.miles.forEach(m => {
+    const hl = m.y === 2025;
+    tlh += `<div class="tl-item">
+      <div class="tl-dot ${hl?'highlight':'normal'}"></div>
+      <div><span class="tl-year ${hl?'highlight':'normal'}">${m.y}</span><span class="tl-text">${m.t}</span></div>
+    </div>`;
+  });
+  document.getElementById("timeline").innerHTML = tlh;
+
+  // Footer
+  document.getElementById("footer").innerHTML = t.footer + "<br>© 2025 Paulo Esteves | BRICS Policy Center";
+}
+
+render();
+</script>
+</body>
+</html>
